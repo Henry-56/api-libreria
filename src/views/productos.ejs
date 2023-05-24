@@ -1,0 +1,101 @@
+<%- include('partials/_header') %>
+
+<div class="container">
+    <div class="row mt-5">
+        
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/productos/add" method="post" enctype="multipart/form-data">
+                        <div class="from-group">
+                            <input type="text" name="nombre" placeholder="Nombre" class="form-control">
+                        </div>
+                        <div class="from-group">
+                            <input type="text" name="descripcion" placeholder="descripcion" class="form-control">
+                        </div>
+                        <div class="from-group">
+                            <input type="text" name="precio" placeholder="precio" class="form-control">
+                        </div>
+                        <div class="from-group">
+                            <input type="text" name="talla" placeholder="talla" class="form-control">
+                        </div>
+                        <div class="from-group">
+                            <input type="text" name="cantidad" placeholder="cantidad" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Colores disponibles:</label>
+                            <select name="color[]" multiple class="form-control">
+                               <option value="rojo">Rojo</option>
+                               <option value="azul">Azul</option>
+                               <option value="verde">Verde</option>
+                               <option value="amarillo">Amarillo</option>
+                            </select>
+                         </div>
+                         
+                        <div class="form-group">
+                            <input type="file" name="img_url" >
+                        </div>
+                        <div class="from-group">
+                            <select name="categoria_id" class="form-control">
+                                <% for(let i = 0; i < categorias.length; i++) { %>
+                                    <option value="<%= categorias[i].id %>"><%= categorias[i].nombre %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                       
+                        
+                        <button type="submit" class="btn btn-primary">
+                           Guardar producto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                        <th>Talla</th>
+                        <th>Cantidad</th>
+                        <th>Color</th>
+                       
+                        <th>Imagen</th>
+                        <th>Categoria</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(productos){ %>
+                        <% for (let i=0; i < productos.length; i++){ %>
+                            <tr>
+                                <td><%= (i+1) %></td>
+                                <td><%= productos[i].nombre %></td>
+                                <td><%= productos[i].descripcion %></td>
+                                <td>S/<%= productos[i].precio %></td>
+                                <td><%= productos[i].talla %></td>
+                                <td><%= productos[i].cantidad %></td>
+                                <td><%= productos[i].color %></td>
+                                
+                                <td>
+                                    <img src="<%= productos[i].img_url %>" alt="Imagen del producto" class="img-thumbnail">
+                                </td>
+                                <td><%= productos[i].categoria_id %></td>
+                                <td>
+                                    <a href="productos/delete/<%= productos[i].id %>" class="btn btn-danger">Eliminar</a>
+                                    <a href="productos/update/<%= productos[i].id %>" class="btn btn-info">Editar</a>
+                                </td>
+                            </tr>
+                       <% } %>
+                    <% }  %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/_footer') %>

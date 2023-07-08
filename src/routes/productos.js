@@ -21,10 +21,12 @@ router.get('/productos', async function(req, res) {
 
   router.post('/productos/add', midellwareImg, async function(req, res) {
     try {
-      console.log("skggshdigh")
+      const hostname = req.hostname; // Obtener el nombre del host actual
+      const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
+      const port = req.app.get('port'); // Obtener el puerto configurado en la aplicación (en este caso, 3000)
+      const Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
       //console.log(req.body)
-      const nameDominio = 'http://localhost:3000';
-      const Image = nameDominio + '/uploads/productos/' + req.file.originalname;
+    
       const data = req.body;
       console.log(data);
       console.log(Image)
@@ -58,10 +60,12 @@ router.get('/productos/update/:id', async function(req, res) {
 router.post('/productos/update/:id',midellwareImg, async function(req, res) {
   try {
     const {id} = req.params;
-    const nameDominio = 'http://localhost:3000';
-    const image = nameDominio + '/uploads/productos/' + req.file.originalname;
+    const hostname = req.hostname; // Obtener el nombre del host actual
+    const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
+    const port = req.app.get('port'); // Obtener el puerto configurado en la aplicación (en este caso, 3000)
+    const Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
     const data = req.body;
-    await productosController.update(id, data, image);
+    await productosController.update(id, data, Image);
     res.status(200).send('Los datos se actualizaron exitosamente');
   } catch (err) {
     res.status(500).send(err);

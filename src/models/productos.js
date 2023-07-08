@@ -1,24 +1,26 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db/config');
-const { Persona } = require('../models/personas');
 
-const Cliente = sequelize.define("clientes", {
+const Producto = sequelize.define("productos", {
   id: { 
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  persona_id: { 
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  email: {
+  nombre: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  password: {
+  descripcion: {
     type: Sequelize.STRING,
+    allowNull: false
+  },
+  precio: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
+  cantidad: {
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   createdAt: {
@@ -31,12 +33,10 @@ const Cliente = sequelize.define("clientes", {
   }
 });
 
-Cliente.belongsTo(Persona, { foreignKey: 'persona_id' });
-
-Cliente.sync()
+Producto.sync()
   .then(() => console.log("Sequelize models initialized"))
   .catch(err => console.error("Error while initializing models: ", err));
 
 module.exports = {
-  Cliente
+  Producto
 };

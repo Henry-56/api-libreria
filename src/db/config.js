@@ -1,3 +1,5 @@
+//require('dotenv').config({ path: '/.env' });
+
 const Sequelize = require('sequelize');
 
 const database = process.env.DB_NAME || 'bszzl18dvdszsuego5yy';

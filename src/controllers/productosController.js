@@ -1,28 +1,100 @@
-//const { Productos } = require('../models/productos');
+const { Producto } = require('../models/productos');
+const { ProductoPicture } = require('../models/productosPictures');
+const { Categoria } = require('../models/categorias');
+const { ProductoCategoria } = require('../models/productosCategoria');
     
 function list() {
-   return Productos.findAll();
-};
+  return ProductoCategoria.findAll({
+    include: [
+      {
+        model: Categoria,
+        as: 'categoria',
+      },
+      {
+        model: Producto,
+        as: 'producto',
+        include: [
+          {
+            model: ProductoPicture,
+            as: 'producto_pictures',
+          }
+        ]
+      }
+    ]
+  });
+}
 
 
-function save(data, Image) {
 
-    return Productos.create({ 
+
+
+async function save(data, image) {
+
+  // Convertir los campos numéricos de cadena a valores numéricos
+  const precio = parseFloat(data.precio);
+  const cantidad = parseInt(data.cantidad);
+  console.log(data.nombreCategoria)
+
+    // Buscar el producto por nombre (puedes ajustar el criterio de búsqueda según tus necesidades)
+  const existingProduct = await Producto.findOne({ where: 
+    { 
       nombre: data.nombre,
       descripcion: data.descripcion,
-      precio: data.precio,
-      talla: data.talla,
-      cantidad: data.cantidad,
-      color: data.color,
-      img_url: Image,
-      categoria_id: data.categoria_id
-    });
+      precio: precio,
+      cantidad: cantidad,
+    }});
 
-};
+
+  // Crear el producto en la tabla Producto
+  const producto = await Producto.create({ 
+    nombre: data.nombre,
+    descripcion: data.descripcion,
+    precio: precio,
+    cantidad: cantidad,
+  });
+
+  // Guardar la imagen en el modelo ProductoPicture
+  
+
+  if (existingProduct) {
+    const productoPicture = await ProductoPicture.create({
+      producto_id: existingProduct.id,
+      img_url: image
+    });
+  }else{
+    const productoPicture = await ProductoPicture.create({
+      producto_id: producto.id,
+      img_url: image
+    });
+  }
+
+  // Guardar el nombre y tipo en la categoría
+  const categoria = await Categoria.create({
+    nombre: data.nombreCategoria,
+    tipo: data.tipo
+  });
+
+  // Crear la relación entre el producto y la categoría en la tabla ProductoCategoria
+  if (existingProduct) {
+    const productoCategoria = await ProductoCategoria.create({
+      producto_id: existingProduct.id,
+      categoria_id: categoria.id
+    });
+  }else{
+    const productoCategoria = await ProductoCategoria.create({
+      producto_id: producto.id,
+      categoria_id: categoria.id
+    });
+  }
+
+  console.log(producto);
+  return producto;
+}
+
 
 
 function eliminar(id) {
-  return Productos.destroy({
+  return ProductoCategoria.destroy({
     where: {
       id: id
     },
@@ -30,34 +102,89 @@ function eliminar(id) {
 };
 
 
-function edit(id) {
-  return Productos.findAll({
-    where: {
-      id: id
-    },
+async function edit(id) {
+  const productoCategoria = await ProductoCategoria.findByPk(id, {
+    include: [
+      {
+        model: Producto,
+        as: 'producto',
+        include: [
+          {
+            model: ProductoPicture,
+            as: 'producto_pictures',
+          }
+        ]
+      },
+      {
+        model: Categoria,
+        as: 'categoria',
+      },
+    ],
   });
-};
+
+  if (!productoCategoria) {
+    throw new Error('ProductoCategoria no encontrado');
+  }
+
+  console.log(productoCategoria);
+  return productoCategoria;
+}
 
 
 
-function updatee(id, newproductos, newImagen) {
-  return Productos.update(
-    { 
-      nombre: newproductos.nombre,
-      descripcion: newproductos.descripcion,
-      precio: newproductos.precio,
-      talla: newproductos.talla,
-      cantidad: newproductos.cantidad,
-      color: newproductos.color,
-      img_url: newImagen,
-      categoria_id: newproductos.categoria_id
-     }, // Objeto con los nuevos valores a actualizar
-    { 
-      where:  {id}  
-    } // Objeto que especifica los registros que deben actualizarse
+
+async function update(id, data, image) {
+  console.log(data)
+  // Convertir los campos numéricos de cadena a valores numéricos
+  const precio = parseFloat(data.precio);
+  const cantidad = parseInt(data.cantidad);
+
+  // Actualizar el producto en la tabla Producto
+  const productoCategoria = await ProductoCategoria.findByPk(id);
+  if (!productoCategoria) {
+    throw new Error('ProductoCategoria no encontrado');
+  }
+
+  const productoId = productoCategoria.producto_id;
+  await Producto.update(
+    {
+      nombre: data.nombre,
+      descripcion: data.descripcion,
+      precio: precio,
+      cantidad: cantidad,
+    },
+    {
+      where: { id: productoId },
+    }
   );
-  Productos.findByPk( id );
-};
+
+  // Guardar la imagen en el modelo ProductoPicture
+  await ProductoPicture.update(
+    {
+      img_url: image,
+    },
+    {
+      where: { producto_id: productoId },
+    }
+  );
+
+  // Actualizar el nombre y tipo en la categoría
+  const categoriaId = productoCategoria.categoria_id;
+  await Categoria.update(
+    {
+      nombre: data.nombreCategoria,
+      tipo: data.tipo,
+    },
+    {
+      where: { id: categoriaId },
+    }
+  );
+
+  console.log(productoCategoria);
+  return productoCategoria;
+}
+
+
 
 
 
@@ -68,6 +195,6 @@ module.exports={
     save,
     eliminar,
     edit,
-    updatee
+    update
     
 }

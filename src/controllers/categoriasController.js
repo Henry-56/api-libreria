@@ -1,7 +1,7 @@
-//const {Categorias} = require('../models/categorias');
+const { Categoria } = require('../models/categorias');
     
 function list() {
-    return Categorias.findAll();
+    return Categoria.findAll();
 };
 
  function save(data) {

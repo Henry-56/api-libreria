@@ -47,9 +47,7 @@ router.post('/categorias/add', async function(req, res) {
    try {
    
        const Categorias = await categoriasController.list();
-       res.render('categorias',{
-       data: Categorias 
-   });
+       res.status(200).json(Categorias);
    } catch (err) {
      res.status(500).send(err);
    }

@@ -6,14 +6,14 @@ function list() {
 
  function save(data) {
   // save user data
-   return Categorias.create({ 
+   return Categoria.create({ 
     nombre: data.nombre,
-    descripcion: data.descripcion,
+    tipo: data.tipo,
    });
 };
 
  function eliminar(id) {
-  return Categorias.destroy({
+  return Categoria.destroy({
     where: {
       id: id
     },
@@ -21,7 +21,7 @@ function list() {
 };
 
 function edit(id) {
-  return Categorias.findAll({
+  return Categoria.findAll({
     where: {
       id: id
     },
@@ -30,10 +30,10 @@ function edit(id) {
 
 
 function updatee(id, newCategorias) {
-  return Categorias.update(
+  return Categoria.update(
     { 
       nombre: newCategorias.nombre,
-      descripcion: newCategorias.descripcion,
+      tipo: newCategorias.tipo,
       
      }, // Objeto con los nuevos valores a actualizar
     { 

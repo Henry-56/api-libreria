@@ -14,7 +14,8 @@ function productoMiddleware(req, res, next) {
 
   upload.single('img_url')(req, res, function (err) {
     if (err) {
-      return res.status(500).send(err);
+      // Ignorar el error y continuar con la ejecución
+      console.log('No se proporcionó ninguna imagen en la solicitud');
     }
     next();
   });

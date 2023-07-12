@@ -57,13 +57,17 @@ router.get('/productos/update/:id', async function(req, res) {
   }
 });
 
-router.post('/productos/update/:id',midellwareImg, async function(req, res) {
+router.post('/productos/update/:id', midellwareImg, async function(req, res) {
   try {
-    const {id} = req.params;
-    const hostname = req.hostname; // Obtener el nombre del host actual
-    const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
-    const port = req.app.get('port'); // Obtener el puerto configurado en la aplicación (en este caso, 3000)
-    const Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
+    console.log("Ya pasaste el middleware");
+    const { id } = req.params;
+    let Image = ''; // Variable para almacenar la imagen (vacía por defecto)
+
+    if (req.file && req.file.originalname) {
+      const hostname = req.hostname; // Obtener el nombre del host actual
+      const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
+      Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
+    }
     const data = req.body;
     await productosController.update(id, data, Image);
     res.status(200).send('Los datos se actualizaron exitosamente');
@@ -71,6 +75,7 @@ router.post('/productos/update/:id',midellwareImg, async function(req, res) {
     res.status(500).send(err);
   }
 });
+
 
 router.get('/productos/delete/:id', async function(req, res) {
   try {

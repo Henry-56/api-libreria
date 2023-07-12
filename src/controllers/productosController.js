@@ -134,7 +134,7 @@ async function edit(id) {
 
 
 async function update(id, data, image) {
-  console.log(data)
+  console.log(data);
   // Convertir los campos numéricos de cadena a valores numéricos
   const precio = parseFloat(data.precio);
   const cantidad = parseInt(data.cantidad);
@@ -158,15 +158,17 @@ async function update(id, data, image) {
     }
   );
 
-  // Guardar la imagen en el modelo ProductoPicture
-  await ProductoPicture.update(
-    {
-      img_url: image,
-    },
-    {
-      where: { producto_id: productoId },
-    }
-  );
+  // Guardar la imagen en el modelo ProductoPicture si `image` no está vacía
+  if (image !== '') {
+    await ProductoPicture.update(
+      {
+        img_url: image,
+      },
+      {
+        where: { producto_id: productoId },
+      }
+    );
+  }
 
   // Actualizar el nombre y tipo en la categoría
   const categoriaId = productoCategoria.categoria_id;
@@ -183,7 +185,6 @@ async function update(id, data, image) {
   console.log(productoCategoria);
   return productoCategoria;
 }
-
 
 
 

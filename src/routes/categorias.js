@@ -16,8 +16,8 @@ router.post('/categorias/add', async function(req, res) {
     try {
     
       const data  = req.body;
-      await categoriasController.save(data, id_producto);
-      res.redirect('/categorias');
+      await categoriasController.save(data);
+      res.status(200).send('Los datos se guardaron exitosamente');
     } catch (err) {
       res.status(500).send(err);
     }
@@ -57,7 +57,7 @@ router.get('/categorias/delete/:id', async function(req, res) {
   try {
     const id = req.params.id;
     await categoriasController.eliminar(id);
-    res.redirect('/categorias');
+    res.status(200).send('Los datos se eliminaron exitosamente');
   } catch (err) {
     res.status(500).send(err);
   }
@@ -67,10 +67,8 @@ router.get('/categorias/delete/:id', async function(req, res) {
 router.get('/categorias/update/:id', async function(req, res) {
   try {
     const { id } = req.params;
-    const Customers = await categoriasController.edit(id);
-    res.render('categorias_edit',{
-      data: Customers[0]
-  });
+    const Categoria = await categoriasController.edit(id);
+    res.status(200).json(Categoria);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -83,7 +81,7 @@ router.post('/categorias/update/:id', async function(req, res) {
     
     const newCategorias=req.body;
     await categoriasController.updatee(id, newCategorias);
-    res.redirect('/categorias');
+    res.status(200).send('Los datos se actualizaron exitosamente');
   } catch (err) {
     res.status(500).send(err);
   }

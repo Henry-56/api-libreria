@@ -19,26 +19,27 @@ router.get('/productos', async function(req, res) {
 
 
 
-  router.post('/productos/add', midellwareImg, async function(req, res) {
-    try {
-      const hostname = req.hostname; // Obtener el nombre del host actual
-      const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
-      const port = req.app.get('port'); // Obtener el puerto configurado en la aplicación (en este caso, 3000)
-      const Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
-      //console.log(req.body)
+router.post('/productos/add', midellwareImg, async function(req, res) {
+  try {
+    console.log("asdpost p")
+    const hostname = req.hostname; // Obtener el nombre del host actual
+    const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
     
-      const data = req.body;
-      console.log(data);
-      console.log(Image)
-      
-      await productosController.save(data, Image);
-  
-      // Enviar mensaje de éxito
-      res.status(200).send('Los datos se guardaron exitosamente');
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  });
+    const images = req.files.map(file => `${protocol}://${hostname}/uploads/productos/${file.originalname}`);
+    
+    const data = req.body;
+    console.log(data);
+    console.log(images);
+    
+    await productosController.save(data, images);
+
+    // Enviar mensaje de éxito
+    res.status(200).send('Los datos se guardaron exitosamente');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
   
 
 

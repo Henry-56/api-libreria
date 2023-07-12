@@ -12,7 +12,7 @@ function productoMiddleware(req, res, next) {
 
   const upload = multer({ storage: storage });
 
-  upload.single('img_url')(req, res, function (err) {
+  upload.array('img_url', 5)(req, res, function (err) {
     if (err) {
       // Ignorar el error y continuar con la ejecución
       console.log('No se proporcionó ninguna imagen en la solicitud');
@@ -20,7 +20,6 @@ function productoMiddleware(req, res, next) {
     next();
   });
 }
-//Ojo al usar este midellware tendras que introducir como pramatreo al formulario lo siguiente enctype="multipart/form-data"
 
 module.exports = productoMiddleware;
 

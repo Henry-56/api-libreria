@@ -10,8 +10,7 @@ const Cliente = sequelize.define("clientes", {
   },
   persona_id: { 
     type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+    allowNull: true
   },
   email: {
     type: Sequelize.STRING,

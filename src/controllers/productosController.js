@@ -28,41 +28,38 @@ function list() {
 
 
 
-async function save(data, image) {
-
+async function save(data, images) {
   // Convertir los campos numéricos de cadena a valores numéricos
   const precio = parseFloat(data.precio);
   const cantidad = parseInt(data.cantidad);
-  console.log(data.nombreCategoria)
 
-    // Buscar el producto por nombre (puedes ajustar el criterio de búsqueda según tus necesidades)
-  const existingProduct = await Producto.findOne({ where: 
-    { 
+  // Buscar el producto por nombre (puedes ajustar el criterio de búsqueda según tus necesidades)
+  const existingProduct = await Producto.findOne({ where: { nombre: data.nombre } });
+
+  let producto;
+
+  if (existingProduct) {
+    // Actualizar el producto existente
+    await existingProduct.update({
+      descripcion: data.descripcion,
+      precio: precio,
+      cantidad: cantidad
+    });
+
+    producto = existingProduct;
+  } else {
+    // Crear un nuevo producto
+    producto = await Producto.create({
       nombre: data.nombre,
       descripcion: data.descripcion,
       precio: precio,
-      cantidad: cantidad,
-    }});
-
-
-  // Crear el producto en la tabla Producto
-  const producto = await Producto.create({ 
-    nombre: data.nombre,
-    descripcion: data.descripcion,
-    precio: precio,
-    cantidad: cantidad,
-  });
-
-  // Guardar la imagen en el modelo ProductoPicture
-  
-
-  if (existingProduct) {
-    const productoPicture = await ProductoPicture.create({
-      producto_id: existingProduct.id,
-      img_url: image
+      cantidad: cantidad
     });
-  }else{
-    const productoPicture = await ProductoPicture.create({
+  }
+
+  // Guardar las imágenes en el modelo ProductoPicture
+  for (const image of images) {
+    await ProductoPicture.create({
       producto_id: producto.id,
       img_url: image
     });
@@ -75,22 +72,14 @@ async function save(data, image) {
   });
 
   // Crear la relación entre el producto y la categoría en la tabla ProductoCategoria
-  if (existingProduct) {
-    const productoCategoria = await ProductoCategoria.create({
-      producto_id: existingProduct.id,
-      categoria_id: categoria.id
-    });
-  }else{
-    const productoCategoria = await ProductoCategoria.create({
-      producto_id: producto.id,
-      categoria_id: categoria.id
-    });
-  }
+  await ProductoCategoria.create({
+    producto_id: producto.id,
+    categoria_id: categoria.id
+  });
 
   console.log(producto);
   return producto;
 }
-
 
 
 function eliminar(id) {

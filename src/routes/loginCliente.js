@@ -24,6 +24,18 @@ router.get('/cliente/perfil', authenticateToken, async (req, res) => {
     }
   });
 
+  router.get('/cliente', async (req, res) => {
+    try {
+      const cliente = await clienteController.listCliente();
+
+     res.status(200).json(cliente);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error en el servidor' });
+    }
+  });
+
+
   
 
 module.exports=router;

@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../db/config');
 const { Cliente } = require('../models/clientes');
 
-const DireccionEnvio = sequelize.define("direccion_envio", {
+const DireccionEnvio = sequelize.define("direccion_envios", {
   id: { 
     type: Sequelize.INTEGER,
     primaryKey: true,

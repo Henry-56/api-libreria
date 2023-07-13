@@ -15,7 +15,21 @@ function list(id) {
     });
   }
 
+  function listCliente() {
+    return Cliente.findAll(
+      {
+        include:[
+          {
+            model: Persona,
+            as: 'persona',
+          }
+        ]
+      }
+    );
+  }
+
   module.exports={
     list,
+    listCliente
     
 }

@@ -18,6 +18,7 @@ const loginRoutes = require('./routes/login');
 const productosRoutes = require('./routes/productos');
 const ApiCustomerRoutes = require('./routes/customerApi');
 const loginClienteRoutes = require('./routes/loginCliente');
+const pedidosRoutes = require('./routes/pedidos');
 
 // ...
 
@@ -32,6 +33,7 @@ app.use('/', categoriaRoutes);
 app.use('/', productosRoutes);
 app.use('/', ApiCustomerRoutes);
 app.use('/', loginClienteRoutes);
+app.use('/', pedidosRoutes);
 
 // archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));

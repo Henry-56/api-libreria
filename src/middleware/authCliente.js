@@ -50,3 +50,21 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
+
+exports.authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(token, 'your-secret-key', (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+
+    req.user = user;
+    next();
+  });
+};

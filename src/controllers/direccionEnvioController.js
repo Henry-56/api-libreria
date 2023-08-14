@@ -1,25 +1,44 @@
 const { DireccionEnvio } = require('../models/direccionEnvio');
-    
+const { Cliente } = require('../models/clientes');
+
 function list() {
     return DireccionEnvio.findAll();
 };
 
- function save(data, id) {
-  // save user data
-   return DireccionEnvio.create({ 
-    cliente_id: id,
-    nombre: data.nombre,
-    apellido: data.apellido,
-    compania: data.compania,
-    correo: data.correo,
-    telefono:data.telefono,
-    pais: data.pais,
-    ciudad: data.ciudad,
-    provincia: data.provincia,
-    codigo_postal: data.codigo_postal,
-    direccion: data.direccion
-   });
-};
+async function save(data, id) {
+  try {
+    console.log('Iniciando función save...');
+    
+    // Encuentra el cliente existente por su ID
+    const cliente = await Cliente.findByPk(id);
+
+    if (!cliente) {
+      throw new Error('Cliente no encontrado');
+    }
+    
+    console.log('Cliente encontrado:', cliente.toJSON());
+
+    // Crea una nueva dirección de envío
+    const nuevaDireccion = await DireccionEnvio.create({
+      direccion: data.direccion,
+      telefono: data.telefono
+    });
+
+    console.log('Nueva dirección creada:', nuevaDireccion.toJSON());
+
+    // Actualiza la columna direccion_id en el cliente con el ID de la nueva dirección
+    await cliente.update({ direccion_id: nuevaDireccion.id });
+
+    console.log('Dirección de envío asociada al cliente.');
+
+    return nuevaDireccion;
+  } catch (error) {
+    console.error('Error al guardar la dirección de envío:', error.message);
+    throw new Error('Error al guardar la dirección de envío: ' + error.message);
+  }
+}
+
+
 
  function eliminar(id) {
   return DireccionEnvio.destroy({

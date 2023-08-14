@@ -39,6 +39,8 @@ Cliente.belongsTo(Persona, { foreignKey: 'persona_id' });
 Cliente.belongsTo(DireccionEnvio, { foreignKey: 'direccion_id' });
 
 
+
+
 Cliente.sync()
   .then(() => console.log("Sequelize models initialized"))
   .catch(err => console.error("Error while initializing models: ", err));

@@ -49,9 +49,7 @@ router.post('/pedidos/add', authenticateToken, async function(req, res) {
     const clienteId = req.user.clientId; // Obtener el ID del cliente desde el token decodificado en el middleware
     const data = req.body;
     const productos = data.productos; // Supongo que los productos están en un array llamado "productos" en los datos del pedido
-    console.log(data);
-    console.log(productos);
-    console.log(clienteId);
+    
     await pedidosController.save(data, productos, clienteId);
     res.status(200).send('Los datos se guardaron exitosamente');
   } catch (err) {
@@ -70,6 +68,15 @@ router.get('/pedidos', async function(req, res) {
   }
 });
 
+router.get('/pedidos/delete/:id', async function(req, res) {
+  try {
+    const id = req.params.id;
+    await pedidosController.eliminar(id);
+    res.status(200).send('Los datos se eliminaron exitosamente');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 
 

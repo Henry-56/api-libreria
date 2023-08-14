@@ -90,13 +90,36 @@ async function save(data, productos, clienteId) {
 }
 
 
- function eliminar(id) {
-  return Pedidos.destroy({
-    where: {
-      id: id
-    },
-  })
-};
+async function eliminar(id) {
+  try {
+    // Buscar el pedido por su ID
+    const pedido = await Pedido.findByPk(id);
+
+    if (!pedido) {
+      throw new Error(`No se encontró el pedido con ID ${id}.`);
+    }
+
+    // Eliminar los DetallePedido asociados al Pedido
+    await DetallePedido.destroy({
+      where: {
+        pedidos_id: pedido.id,
+      },
+    });
+
+    // Eliminar el Pedido
+    const deletedPedido = await Pedido.destroy({
+      where: {
+        id: id,
+      },
+    });
+
+    return deletedPedido;
+  } catch (error) {
+    console.error('Error al eliminar el pedido:', error);
+    throw error;
+  }
+}
+
 
 function edit(id) {
   return Pedidos.findAll({

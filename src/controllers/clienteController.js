@@ -3,8 +3,7 @@ const { Cliente } = require('../models/clientes');
 const { DireccionEnvio } = require('../models/direccionEnvio');
 
 
-// Definir las asociaciones
-Cliente.hasOne(DireccionEnvio, { foreignKey: 'cliente_id' });
+
 
 
 
@@ -29,6 +28,10 @@ function list(id) {
           {
             model: DireccionEnvio,
             as: 'direccion_envio', // Asegúrate de que el alias coincida con el que has definido en la asociación
+          },
+          {
+            model: Persona,
+            as: 'persona', // Asegúrate de que el alias coincida con el que has definido en la asociación
           },
         ],
       });

@@ -1,27 +1,27 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db/config');
-const { Persona } = require('../models/personas');
+const { Cliente } = require('../models/clientes');
 const { DireccionEnvio } = require('../models/direccionEnvio');
 
-const Cliente = sequelize.define("clientes", {
+const Pedido = sequelize.define("pedidos", {
   id: { 
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  persona_id: { 
+  cliente_id: { 
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  direccion_id: { 
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  email: {
-    type: Sequelize.STRING,
+  fecha_pedido: {
+    type: Sequelize.DATE,
     allowNull: false
   },
-  password: {
+  costo: {
+    type: Sequelize.FLOAT,
+    allowNull: false
+  },
+  estado: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -35,14 +35,12 @@ const Cliente = sequelize.define("clientes", {
   }
 });
 
-Cliente.belongsTo(Persona, { foreignKey: 'persona_id' });
-Cliente.belongsTo(DireccionEnvio, { foreignKey: 'direccion_id' });
+Pedido.belongsTo(Cliente, { foreignKey: 'cliente_id' }); // Relación con Cliente
 
-
-Cliente.sync()
+Pedido.sync()
   .then(() => console.log("Sequelize models initialized"))
   .catch(err => console.error("Error while initializing models: ", err));
 
 module.exports = {
-  Cliente
+  Pedido
 };

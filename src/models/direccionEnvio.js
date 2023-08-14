@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db/config');
-const { Cliente } = require('../models/clientes');
+
 
 const DireccionEnvio = sequelize.define("direccion_envios", {
   id: { 
@@ -8,49 +8,12 @@ const DireccionEnvio = sequelize.define("direccion_envios", {
     primaryKey: true,
     autoIncrement: true
   },
-  cliente_id: { 
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  nombre: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  apellido: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-
-  compania: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  correo: {
+  direccion: {
     type: Sequelize.STRING,
     allowNull: false
   },
   telefono: {
     type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  pais: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  ciudad: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  provincia: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  codigo_postal: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  direccion: {
-    type: Sequelize.STRING,
     allowNull: false
   },
   createdAt: {
@@ -63,10 +26,8 @@ const DireccionEnvio = sequelize.define("direccion_envios", {
   }
 });
 
-DireccionEnvio.belongsTo(Cliente, { foreignKey: 'cliente_id' });
-// Se establece la relación con la tabla Cliente utilizando la clave externa 'cliente_id'
 
-DireccionEnvio.sync({ force: true })
+DireccionEnvio.sync()
   .then(() => {
     console.log("Sequelize models synchronized successfully");
     // Realiza acciones adicionales después de la sincronización

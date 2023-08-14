@@ -28,7 +28,7 @@ function list() {
 
 
 
-async function save(data, images) {
+async function save(data, image) {
   // Convertir los campos numéricos de cadena a valores numéricos
   const precio = parseFloat(data.precio);
   const cantidad = parseInt(data.cantidad);
@@ -57,13 +57,11 @@ async function save(data, images) {
     });
   }
 
-  // Guardar las imágenes en el modelo ProductoPicture
-  for (const image of images) {
-    await ProductoPicture.create({
-      producto_id: producto.id,
-      img_url: image
-    });
-  }
+  // Guardar la imagen en el modelo ProductoPicture
+  await ProductoPicture.create({
+    producto_id: producto.id,
+    img_url: image
+  });
 
   // Guardar el nombre y tipo en la categoría
   const categoria = await Categoria.create({
@@ -80,7 +78,6 @@ async function save(data, images) {
   console.log(producto);
   return producto;
 }
-
 
 function eliminar(id) {
   return ProductoCategoria.destroy({
@@ -123,7 +120,7 @@ async function edit(id) {
 
 
 async function update(id, data, image) {
-  console.log(data);
+  console.log(image);
   // Convertir los campos numéricos de cadena a valores numéricos
   const precio = parseFloat(data.precio);
   const cantidad = parseInt(data.cantidad);

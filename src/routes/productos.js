@@ -22,16 +22,17 @@ router.get('/productos', async function(req, res) {
 router.post('/productos/add', midellwareImg, async function(req, res) {
   try {
     console.log("asdpost p")
-    const hostname = req.hostname; // Obtener el nombre del host actual
-    const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
-    
-    const images = req.files.map(file => `${protocol}://${hostname}/uploads/productos/${file.originalname}`);
-    
+    let Image = ''; // Variable para almacenar la imagen (vacía por defecto)
+    if (req.file && req.file.originalname) {
+      const hostname = req.hostname; // Obtener el nombre del host actual
+      const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
+      Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
+    }
     const data = req.body;
     console.log(data);
-    console.log(images);
+    console.log(Image);
     
-    await productosController.save(data, images);
+    await productosController.save(data, Image);
 
     // Enviar mensaje de éxito
     res.status(200).send('Los datos se guardaron exitosamente');
@@ -63,13 +64,13 @@ router.post('/productos/update/:id', midellwareImg, async function(req, res) {
     console.log("Ya pasaste el middleware");
     const { id } = req.params;
     let Image = ''; // Variable para almacenar la imagen (vacía por defecto)
-
     if (req.file && req.file.originalname) {
       const hostname = req.hostname; // Obtener el nombre del host actual
       const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
       Image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
     }
     const data = req.body;
+    console.log("la img es : "+Image)
     await productosController.update(id, data, Image);
     res.status(200).send('Los datos se actualizaron exitosamente');
   } catch (err) {

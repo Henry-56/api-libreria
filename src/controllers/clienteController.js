@@ -1,5 +1,12 @@
 const { Persona } = require('../models/personas');
 const { Cliente } = require('../models/clientes');
+const { DireccionEnvio } = require('../models/direccionEnvio');
+
+
+// Definir las asociaciones
+Cliente.hasOne(DireccionEnvio, { foreignKey: 'cliente_id' });
+
+
 
 function list(id) {
     return Cliente.findOne({
@@ -15,19 +22,22 @@ function list(id) {
     });
   }
 
-  function listCliente() {
-    return Cliente.findAll(
-      {
-        include:[
+  async function listCliente() {
+    try {
+      const clientes = await Cliente.findAll({
+        include: [
           {
-            model: Persona,
-            as: 'persona',
-          }
-        ]
-      }
-    );
+            model: DireccionEnvio,
+            as: 'direccion_envio', // Asegúrate de que el alias coincida con el que has definido en la asociación
+          },
+        ],
+      });
+      return clientes;
+    } catch (error) {
+      console.error("Error while fetching clients: ", error);
+      throw error;
+    }
   }
-
   module.exports={
     list,
     listCliente

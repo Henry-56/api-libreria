@@ -12,7 +12,7 @@ function productoMiddleware(req, res, next) {
 
   const upload = multer({ storage: storage });
 
-  upload.array('img_url', 5)(req, res, function (err) {
+  upload.single('img_url')(req, res, function (err) {
     if (err) {
       // Ignorar el error y continuar con la ejecución
       console.log('No se proporcionó ninguna imagen en la solicitud');

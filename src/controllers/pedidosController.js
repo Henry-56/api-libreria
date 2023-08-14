@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize'); // Add this line to import Sequelize
 const { Producto } = require('../models/productos');
+const { Persona } = require('../models/personas');
 const { Pedido } = require('../models/pedidos');
 const { DetallePedido } = require('../models/detallePedido');
 const { DireccionEnvio } = require('../models/direccionEnvio');
@@ -21,6 +22,10 @@ async function list() {
                   model: DireccionEnvio,
                   as: 'direccion_envio',
                 }, 
+                {
+                  model: Persona,
+                  as: 'persona',
+                },
               ]
             }, 
           ]

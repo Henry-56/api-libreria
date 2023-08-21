@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   try {
     const usuario = await Usuario.findOne({ where: { email }, include: Persona });
@@ -44,8 +44,28 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: 'El correo electrónico o la contraseña son incorrectos' });
     }
 
-    const token = jwt.sign({ userId: usuario.id, nombre: usuario.persona.nombre, email, rol: usuario.rol }, 'your-secret-key', { expiresIn: '1h' });
-    res.json({ token, message: 'Inicio de sesión exitoso' });
+    const token = jwt.sign(
+      {
+        userId: usuario.id,
+        nombre: usuario.persona.nombre,
+        apellido: usuario.persona.apellido,
+        fecha_nacimiento: usuario.persona.fecha_nacimiento,
+        email,
+      },
+      'your-secret-key',
+      { expiresIn: '1h' }
+    );
+    
+    res.json({ 
+      token,
+      user: {
+        nombre: usuario.persona.nombre,
+        apellido: usuario.persona.apellido,
+        fecha_nacimiento: usuario.persona.fecha_nacimiento,
+        email,
+      },
+      message: 'Inicio de sesión exitoso'
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error en el servidor' });

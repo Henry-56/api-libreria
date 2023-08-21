@@ -20,10 +20,10 @@ const Usuario = sequelize.define("usuarios", {
     type: Sequelize.STRING,
     allowNull: false
   },
-  rol: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
+  // rol: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false
+  // },
   createdAt: {
     type: Sequelize.DATE,
     allowNull: true

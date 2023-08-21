@@ -5,11 +5,11 @@ const { registerUser, loginUser } = require('../middleware/auth');
 
 
 
-router.post('/register', registerUser);
+router.post('/admin/register', registerUser);
 
 
 
-router.post('/login', loginUser);
+router.post('/admin/login', loginUser);
 
 
 

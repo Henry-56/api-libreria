@@ -1,3 +1,4 @@
+
 const { Producto } = require('../models/productos');
 const { ProductoPicture } = require('../models/productosPictures');
 const { Categoria } = require('../models/categorias');
@@ -174,6 +175,21 @@ async function update(id, data, image) {
 
 
 
+async function updateImage(productId, image) {
+  // Actualizar la imagen en el modelo ProductoPicture
+  await ProductoPicture.update(
+    {
+      img_url: image,
+    },
+    {
+      where: { producto_id: productId },
+    }
+  );
+
+  // Devolver un mensaje de éxito o cualquier otra respuesta necesaria
+  return ProductoPicture;
+}
+
 
 
 
@@ -182,6 +198,7 @@ module.exports={
     save,
     eliminar,
     edit,
-    update
+    update,
+    updateImage
     
 }

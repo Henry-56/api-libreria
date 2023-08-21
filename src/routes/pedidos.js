@@ -79,6 +79,19 @@ router.get('/pedidos/delete/:id', async function(req, res) {
 });
 
 
+router.post('/pedidos/update/:id', async function(req, res) {
+  try {
+      const id = req.params.id;
+      const newData= req.body;
+      console.log(newData);
+      await pedidosController.update(id, newData);
+      res.status(200).send('Los datos del pediddo se actualizaron exitosamente');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+
 
 
 

@@ -136,6 +136,22 @@ function edit(id) {
 
 
 
+async function update(id, newData) {
+  const { estado } = newData;
+  const updatedPedido = await Pedido.update(
+    {
+      estado: estado,
+    },
+    {
+      where: { id: id },
+    }
+  );
+
+
+  return updatedPedido;
+}
+
+
 
 
 
@@ -144,6 +160,6 @@ module.exports={
     list,
     save,
     eliminar,
-    edit,
+    update,
     
 }

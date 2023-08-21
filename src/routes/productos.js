@@ -32,7 +32,7 @@ router.post('/productos/add', midellwareImg, async function(req, res) {
     console.log(data);
     console.log(Image);
     
-    await productosController.save(data, Image);
+    await productosController.save(data, Image  );
 
     // Enviar mensaje de éxito
     res.status(200).send('Los datos se guardaron exitosamente');
@@ -84,6 +84,23 @@ router.get('/productos/delete/:id', async function(req, res) {
     const id = req.params.id;
     await productosController.eliminar(id);
     res.status(200).send('Los datos se eliminaron exitosamente');
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+router.post('/productos/:id/update/image',midellwareImg, async function(req, res) {
+  try {
+    console.log("zz")
+    const id = req.params.id;
+    console.log(id)
+    if (req.file && req.file.originalname) {
+      const hostname = req.hostname; // Obtener el nombre del host actual
+      const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
+      image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
+    }
+    await productosController.updateImage(id, image);
+    res.status(200).send('Imagen del producto actualizada correctamente');
   } catch (err) {
     res.status(500).send(err);
   }

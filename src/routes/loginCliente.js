@@ -35,6 +35,34 @@ router.get('/cliente/perfil', authenticateToken, async (req, res) => {
     }
   });
 
+  router.post('/cliente/update/passaword', authenticateToken, async (req, res) => {
+    try {
+      const clienteId = req.user.clientId; // Obtener el ID del cliente desde el token decodificado en el middleware
+      const data = req.body;
+      const oldPassword = data.oldPassword;
+      const newPassword = data.newPassword;
+      await clienteController.updatePassaword(clienteId, oldPassword,newPassword );
+
+      res.status(200).send('Los datos de la contraseña se actualizaron exitosamente');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error en el servidor' });
+    }
+  });
+
+
+  router.post('/cliente/update', authenticateToken, async (req, res) => {
+    try {
+      const clienteId = req.user.clientId; // Obtener el ID del cliente desde el token decodificado en el middleware
+      const data = req.body;
+      await clienteController.updateData(clienteId, data );
+
+      res.status(200).send('Los datos del cliente se actualizaron exitosamente');
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error en el servidor' });
+    }
+  });
 
   
 

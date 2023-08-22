@@ -95,7 +95,7 @@ router.get('/pedidos-agrupados', async function(req, res) {
               fecha_nacimiento: item.pedido.cliente.persona.fecha_nacimiento
             },
           },
-          productos: [{
+          producto: [{
             id: item.producto.id,
             nombre: item.producto.nombre,
             descripcion: item.producto.descripcion,

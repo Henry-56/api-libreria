@@ -60,6 +60,9 @@ router.get('/pedidos-agrupados', async function(req, res) {
       const existingPedido = productosAgrupados.find(pedidoGroup => pedidoGroup.pedido.id === item.pedido.id);
 
       if (existingPedido) {
+        if (!existingPedido.productos) {
+          existingPedido.productos = []; // Inicializar el array de productos si no existe
+        }
         existingPedido.productos.push({
           id: item.producto.id,
           nombre: item.producto.nombre,
@@ -95,7 +98,7 @@ router.get('/pedidos-agrupados', async function(req, res) {
               fecha_nacimiento: item.pedido.cliente.persona.fecha_nacimiento
             },
           },
-          producto: [{
+          productos: [{
             id: item.producto.id,
             nombre: item.producto.nombre,
             descripcion: item.producto.descripcion,

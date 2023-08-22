@@ -138,7 +138,8 @@ function edit(id) {
 
 async function update(id, newData) {
   const { estado } = newData;
-  const updatedPedido = await Pedido.update(
+  
+  await Pedido.update(
     {
       estado: estado,
     },
@@ -147,6 +148,8 @@ async function update(id, newData) {
     }
   );
 
+  // Realiza una búsqueda para obtener los datos actualizados
+  const updatedPedido = await Pedido.findByPk(id);
 
   return updatedPedido;
 }

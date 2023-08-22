@@ -15,7 +15,13 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const persona = await Persona.create({ nombre, apellido, fecha_nacimiento });
-    const cliente = await Cliente.create({ persona_id: persona.id, email, password: hashedPassword });
+    const cliente = await Cliente.create({
+      persona_id: persona.id,
+      direccion_id: null,// Agrega el valor predeterminado aquí
+      email,
+      password: hashedPassword,
+      
+    });
 
     if (!cliente) {
       throw new Error('El cliente no se creó correctamente');
@@ -27,6 +33,7 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
+
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;

@@ -17,6 +17,10 @@ function list(id) {
         {
           model: Persona,
           as: 'persona',
+        },
+        {
+          model: DireccionEnvio,
+          as: 'direccion_envio', // Asegúrate de que el alias coincida con el que has definido en la asociación
         }
       ]
     });

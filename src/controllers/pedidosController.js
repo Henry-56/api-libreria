@@ -6,43 +6,43 @@ const { DetallePedido } = require('../models/detallePedido');
 const { DireccionEnvio } = require('../models/direccionEnvio');
 const { Cliente } = require('../models/clientes');
     
-async function list() {
-  try {
-    const detallePedidos = await DetallePedido.findAll({
-      include: [
-        {
-          model: Pedido,
-          as: 'pedido',
-          include: [
-            {
-              model: Cliente,
-              as: 'cliente',
-              include: [
-                {
-                  model: DireccionEnvio,
-                  as: 'direccion_envio',
-                }, 
-                {
-                  model: Persona,
-                  as: 'persona',
-                },
-              ]
-            }, 
-          ]
-        },
-        {
-          model: Producto,
-          as: 'producto',
-        }
-      ]
-    });
+  async function list() {
+    try {
+      const detallePedidos = await DetallePedido.findAll({
+        include: [
+          {
+            model: Pedido,
+            as: 'pedido',
+            include: [
+              {
+                model: Cliente,
+                as: 'cliente',
+                include: [
+                  {
+                    model: DireccionEnvio,
+                    as: 'direccion_envio',
+                  }, 
+                  {
+                    model: Persona,
+                    as: 'persona',
+                  },
+                ]
+              }, 
+            ]
+          },
+          {
+            model: Producto,
+            as: 'producto',
+          }
+        ]
+      });
 
-    return detallePedidos;
-  } catch (error) {
-    console.error('Error al obtener los datos:', error);
-    throw error;
+      return detallePedidos;
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+      throw error;
+    }
   }
-}
 
 
 

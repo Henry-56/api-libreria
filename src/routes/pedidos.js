@@ -51,11 +51,6 @@ router.get('/pedidos-agrupados', async function(req, res) {
     const productosAgrupados = [];
 
     detallePedidos.forEach(item => {
-      const detallePedido = { // Crear el objeto detallePedido para asignar a cada producto
-        producto_id: item.producto_id,
-        cantidad: item.cantidad,
-        precio: item.precio,
-      };
       
       const existingPedido = productosAgrupados.find(pedidoGroup => pedidoGroup.pedido.id === item.pedido.id);
 
@@ -69,7 +64,7 @@ router.get('/pedidos-agrupados', async function(req, res) {
           descripcion: item.producto.descripcion,
           precio: item.producto.precio,
           cantidad: item.producto.cantidad,
-          detallePedidos: detallePedido, // Asignar el objeto detallePedido a cada producto
+         
           // Otros campos del producto que deseas incluir
         });
       } else {
@@ -104,7 +99,7 @@ router.get('/pedidos-agrupados', async function(req, res) {
             descripcion: item.producto.descripcion,
             precio: item.producto.precio,
             cantidad: item.producto.cantidad,
-            detallePedidos: detallePedido, // Asignar el objeto detallePedido a cada producto
+          
             // Otros campos del producto que deseas incluir
           }]
         };

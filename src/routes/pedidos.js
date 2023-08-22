@@ -63,8 +63,8 @@ router.get('/pedidos-agrupados', async function(req, res) {
           nombre: item.producto.nombre,
           descripcion: item.producto.descripcion,
           precio: item.producto.precio,
-          cantidad: item.producto.cantidad,
-         
+          cantidad: item.cantidad,
+        
           // Otros campos del producto que deseas incluir
         });
       } else {
@@ -98,8 +98,8 @@ router.get('/pedidos-agrupados', async function(req, res) {
             nombre: item.producto.nombre,
             descripcion: item.producto.descripcion,
             precio: item.producto.precio,
-            cantidad: item.producto.cantidad,
-          
+            cantidad: item.cantidad,
+           
             // Otros campos del producto que deseas incluir
           }]
         };

@@ -99,7 +99,8 @@ router.post('/productos/:id/update/image',midellwareImg, async function(req, res
       const protocol = req.protocol; // Obtener el protocolo utilizado (http o https)
       image = `${protocol}://${hostname}/uploads/productos/${req.file.originalname}`;
     }
-    await productosController.updateImage(id, image);
+    const imgp=await productosController.updateImage(id, image);
+    console.log(imgp);
     res.status(200).send('Imagen del producto actualizada correctamente');
   } catch (err) {
     res.status(500).send(err);
@@ -119,7 +120,17 @@ router.post('/productos/:id/update/image',midellwareImg, async function(req, res
 //   }
 // });
 
+router.get('/productos-img', async function(req, res) {
+  try {
 
+    const productos = await productosController.listImg();
+    res.status(200).json(productos);
+  } catch (err) {
+    res.status(500).json({
+      error: err.message
+    });
+  }
+});
 
 
 

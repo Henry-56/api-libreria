@@ -50,17 +50,7 @@ function list(id) {
   async function updateData(id, newData) {
     const { nombre, apellido, fecha_nacimiento, email } = newData;
   
-    const updatedPersona = await Persona.update(
-      {
-        nombre: nombre,
-        apellido: apellido,
-        fecha_nacimiento: fecha_nacimiento,
-      },
-      {
-        where: { id: id },
-      }
-    );
-  
+    // Actualizar datos en la tabla Cliente
     const updatedCliente = await Cliente.update(
       {
         email: email,
@@ -70,11 +60,38 @@ function list(id) {
       }
     );
   
-    const personaActualizada = await Persona.findByPk(id);
+    // Verificar si el cliente se actualizó con éxito
+    if (updatedCliente[0] === 0) {
+      return null; // El cliente no se encontró o no se actualizó
+    }
+  
+    // Obtener el cliente actualizado para obtener el persona_id
     const clienteActualizado = await Cliente.findByPk(id);
+    const personaId = clienteActualizado.persona_id;
+  
+    // Actualizar datos en la tabla Persona
+    const updatedPersona = await Persona.update(
+      {
+        nombre: nombre,
+        apellido: apellido,
+        fecha_nacimiento: fecha_nacimiento,
+      },
+      {
+        where: { id: personaId },
+      }
+    );
+  
+    // Verificar si la persona se actualizó con éxito
+    if (updatedPersona[0] === 0) {
+      return null; // La persona no se encontró o no se actualizó
+    }
+  
+    // Obtener la persona actualizada
+    const personaActualizada = await Persona.findByPk(personaId);
   
     return { personaActualizada, clienteActualizado };
   }
+  
   
   
   async function comparePasswords(password, hashedPassword) {

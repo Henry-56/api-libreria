@@ -192,6 +192,10 @@ async function updateImage(productId, image) {
 
 
 
+function listImg() {
+  return ProductoPicture.findAll();
+}
+
 
 module.exports={
     list,
@@ -199,6 +203,6 @@ module.exports={
     eliminar,
     edit,
     update,
-    updateImage
-    
+    updateImage,
+    listImg    
 }

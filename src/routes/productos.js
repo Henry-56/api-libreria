@@ -73,9 +73,12 @@ router.post('/productos/update/:id', midellwareImg, async function(req, res) {
     console.log("la img es : "+Image)
     await productosController.update(id, data, Image);
     res.status(200).send('Los datos se actualizaron exitosamente');
-  } catch (err) {
-    res.status(500).send(err);
+  } 
+  catch (err) {
+    console.error('Error al actualizar el producto:', err);
+    res.status(500).send('Error al actualizar el producto: ' + err.message);
   }
+  
 });
 
 

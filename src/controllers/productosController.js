@@ -123,8 +123,7 @@ async function edit(id) {
 async function update(id, data, image) {
   console.log(image);
   // Convertir los campos numéricos de cadena a valores numéricos
-  const precio = parseFloat(data.precio);
-  const cantidad = parseInt(data.cantidad);
+
 
   // Actualizar el producto en la tabla Producto
   const productoCategoria = await ProductoCategoria.findByPk(id);
@@ -137,8 +136,8 @@ async function update(id, data, image) {
     {
       nombre: data.nombre,
       descripcion: data.descripcion,
-      precio: precio,
-      cantidad: cantidad,
+      precio: data.precio,
+      cantidad: data.cantidad,
     },
     {
       where: { id: productoId },

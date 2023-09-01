@@ -155,16 +155,37 @@ router.get('/pedidos/delete/:id', async function(req, res) {
   }
 });
 
+router.get('/pedidos/edit/:id', async function(req, res) {
+  try {
+    const id = req.params.id;
+    console.log("eedit");
+    const pedido=await pedidosController.edit(id);
+    res.status(200).json(pedido);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
 
 router.post('/pedidos/update/:id', async function(req, res) {
   try {
-      const id = req.params.id;
-      const newData= req.body;
-      console.log(newData);
-      const pedido =await pedidosController.update(id, newData);
-      res.status(200).json(pedido);
+    const id = req.params.id;
+    const newData = req.body;
+   
+    const pedido = await pedidosController.update(id, newData);
+    const detallePedidos=await pedidosController.edit(id);
+
+    if (newData.estado === 'proceso') {
+      await pedidosController.sendEmail(detallePedidos );
+    } else if (newData.estado === 'completado') {
+      console.log("estamos en completado");
+      await pedidosController.sendEmailComplt(data);
+    }
+
+    return res.status(200).json(pedido); // Asegura que solo se envíe una respuesta
   } catch (err) {
-    res.status(500).send(err);
+    console.error(err);
+    return res.status(500).send(err); // Asegura que solo se envíe una respuesta
   }
 });
 

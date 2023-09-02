@@ -126,29 +126,49 @@ async function eliminar(id) {
   }
 }
 
-
 async function edit(id) {
   try {
     console.log("func edit");
-    const pedido = await Pedido.findByPk(id, {
+
+    // Utilizar findAll con la condición para buscar todos los registros que cumplan la condición
+    const detallePedidos = await DetallePedido.findAll({
+      where: { pedidos_id: id },
       include: [
         {
-          model: Cliente,
-          as: 'cliente', // Asegúrate de usar el alias correcto que hayas definido en las asociaciones
+          model: Pedido,
+          as: 'pedido',
+          include: [
+            {
+              model: Cliente,
+              as: 'cliente',
+              include: [
+                {
+                  model: DireccionEnvio,
+                  as: 'direccion_envio',
+                },
+                {
+                  model: Persona,
+                  as: 'persona',
+                },
+              ]
+            },
+          ]
         },
-      ],
+        {
+          model: Producto,
+          as: 'producto',
+        }
+      ]
     });
 
-    if (!pedido) {
-      throw new Error(`No se encontró el pedido con ID ${id}.`);
-    }
-
-    return pedido;
+    return detallePedidos;
   } catch (error) {
-    console.error('Error al obtener el pedido:', error);
+    console.error('Error al obtener los pedidos:', error);
     throw error;
   }
 }
+
+
 
 
 async function update(id, newData) {
@@ -172,8 +192,11 @@ async function update(id, newData) {
 
 
 
+
+
 function sendEmail(data) {
-  console.log(data)
+  console.log(data);
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -185,13 +208,35 @@ function sendEmail(data) {
     }
   });
 
-  const mailOptions = {
-    from: 'libreriaolayahuancayo@gmail.com',
-    to: `${data.cliente.email}`,
-    subject: 'Se está procesando tu pedido',
-    text: `Estimado cliente,
+  let productosDetalle = '';
+  let subtotal = 0;
 
-Gracias por tu interés en nuestros productos. Nos complace informarte que estamos procesando tu pedido. 
+  data.forEach(pedido => {
+    pedido.productos.forEach(producto => {
+      const productoDetalle = `${producto.cantidad} x ${producto.nombre} - S/${producto.precio} =S/${producto.cantidad*producto.precio}\n`;
+      subtotal += producto.cantidad * parseFloat(producto.precio);
+      productosDetalle += productoDetalle;
+    });
+
+    const mailOptions = {
+      from: 'libreriaolayahuancayo@gmail.com',
+      to: pedido.cliente.email,
+      subject: 'Se está procesando tu pedido',
+      text: `Estimado cliente,
+
+Gracias por tu interés en nuestros productos. Nos complace informarte que estamos procesando tu pedido. A continuación, detallaremos tu pedido:
+
+
+Fecha del Pedido: ${pedido.pedido.fecha_pedido}
+Costo Total: S/${subtotal}
+Estado del Pedido: ${pedido.pedido.estado}
+
+Productos:
+${productosDetalle}
+
+Dirección de Envío:
+${pedido.cliente.direccion_envio.direccion}
+Teléfono de Contacto: ${pedido.cliente.direccion_envio.telefono}
 
 
 Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
@@ -199,21 +244,21 @@ Si tienes alguna pregunta o necesitas más información, no dudes en contactarno
 Atentamente,
 Tu empresa
 `
-  };
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-    } else {
-      console.log('Correo electrónico enviado:', info.response);
-    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error al enviar el correo electrónico:', error);
+      } else {
+        console.log('Correo electrónico enviado:', info.response);
+      }
+    });
   });
 }
 
 
 
 function sendEmailComplt(data) {
-  //console.log(data);
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -225,51 +270,145 @@ function sendEmailComplt(data) {
     }
   });
 
-  const nombresProductos = data.productos_nombres.split(', ');
-  const cantidadesProductos = data.cantidad.split(', ');
-  const preciosProductos = data.productos_precios.split(', ');
+  data.forEach(pedido => {
+    const factura = generarBoleta(pedido);
 
-  let productosDetalle = '';
-  let subtotal = 0;
+    const mailOptions = {
+      from: 'libreriaolayahuancayo@gmail.com',
+      to: pedido.cliente.email,
+      subject: 'Se completó tu pedido',
+      text: `Estimado cliente,
 
-  for (let i = 0; i < nombresProductos.length; i++) {
-    const productoDetalle = `${cantidadesProductos[i]} x ${nombresProductos[i]} - S/${preciosProductos[i]}\n`;
-    subtotal += cantidadesProductos[i] * preciosProductos[i];
-    productosDetalle += productoDetalle;
-  }
+Gracias por tu interés en nuestros productos. Nos complace informarte que tu pedido ha sido completado con éxito. A continuación, adjuntamos el comprobante de tu compra:
 
-  const igv = subtotal * 0.18;
-  const total = subtotal + igv;
+${factura}
 
-  const mailOptions = {
-    from: 'empresaryh8@gmail.com',
-    to: `${data.email}`,
-    subject: 'Boleta de Venta',
-    text: `Estimado cliente,
+Dirección de Envío:
+${pedido.cliente.direccion_envio.direccion}
+Teléfono de Contacto: ${pedido.cliente.direccion_envio.telefono}
 
-Gracias por su compra. A continuación encontrará los detalles de su pedido:
-
-${productosDetalle}
-Subtotal: S/${subtotal.toFixed(2)}
-IGV (18%): S/${igv.toFixed(2)}
-Total: S/${total.toFixed(2)}
-
-Si tiene alguna pregunta o necesita más información, no dude en contactarnos.
+Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
 
 Atentamente,
 Tu empresa
 `
-  };
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log('Error al enviar el correo electrónico:', error);
-    } else {
-      console.log('Correo electrónico enviado:', info.response);
-    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error al enviar el correo electrónico:', error);
+      } else {
+        console.log('Correo electrónico enviado:', info.response);
+      }
+    });
   });
 }
 
+
+function agruparProductosYPedidos(detallePedidos) {
+  const productosAgrupados = [];
+
+  if (detallePedidos && Array.isArray(detallePedidos)) {
+    detallePedidos.forEach(item => {
+      const existingPedido = productosAgrupados.find(pedidoGroup => pedidoGroup.pedido.id === item.pedido.id);
+
+      if (existingPedido) {
+        if (!existingPedido.productos) {
+          existingPedido.productos = [];
+        }
+        existingPedido.productos.push({
+          id: item.producto.id,
+          nombre: item.producto.nombre,
+          descripcion: item.producto.descripcion,
+          precio: item.producto.precio,
+          cantidad: item.cantidad,
+          // Otros campos del producto que deseas incluir
+        });
+      } else {
+        const pedido = {
+          pedido: {
+            id: item.pedido.id,
+            fecha_pedido: item.pedido.fecha_pedido,
+            costo: item.pedido.costo,
+            estado: item.pedido.estado,
+            // Otros campos del pedido que deseas incluir
+          },
+          cliente: {
+            id: item.pedido.cliente.id,
+            email: item.pedido.cliente.email,
+            direccion_envio: {
+              id: item.pedido.cliente.direccion_envio ? item.pedido.cliente.direccion_envio.id : '',
+              direccion: item.pedido.cliente.direccion_envio ? item.pedido.cliente.direccion_envio.direccion : '',
+              telefono: item.pedido.cliente.direccion_envio ? item.pedido.cliente.direccion_envio.telefono : '',
+              fecha_nacimiento: item.pedido.cliente.direccion_envio ? item.pedido.cliente.direccion_envio.fecha_nacimiento : ''
+            },
+            persona: {
+              id: item.pedido.cliente.persona.id,
+              nombre: item.pedido.cliente.persona.nombre,
+              apellido: item.pedido.cliente.persona.apellido,
+              fecha_nacimiento: item.pedido.cliente.persona.fecha_nacimiento
+            },
+          },
+          productos: [{
+            id: item.producto.id,
+            nombre: item.producto.nombre,
+            descripcion: item.producto.descripcion,
+            precio: item.producto.precio,
+            cantidad: item.cantidad,
+            // Otros campos del producto que deseas incluir
+          }]
+        };
+
+        productosAgrupados.push(pedido);
+      }
+    });
+  }
+
+  return productosAgrupados;
+}
+
+
+
+
+
+function generarBoleta(pedido) {
+  let factura = '';
+
+  // Encabezado de la boleta
+  factura += '---------------------------------------\n';
+  factura += '          COMPROBANTE DE PAGO\n';
+  factura += '---------------------------------------\n';
+
+  // Información del cliente
+  
+  factura += `Dirección de Envío: ${pedido.cliente.direccion_envio.direccion}\n`;
+  factura += `Teléfono: ${pedido.cliente.direccion_envio.telefono}\n`;
+
+  // Detalles de los productos
+  factura += '---------------------------------------\n';
+  factura += 'Descripción        |  Cantidad   |  Precio  |  Total\n';
+  factura += '---------------------------------------\n';
+
+  let subtotal = 0;
+
+  pedido.productos.forEach(producto => {
+    const precioUnitario = parseFloat(producto.precio);
+    const cantidad = producto.cantidad;
+    const totalProducto = precioUnitario * cantidad;
+    
+    factura += `${producto.nombre.padEnd(20)}|  ${cantidad.toString().padEnd(12)}|  S/${precioUnitario.toFixed(2).padEnd(8)}|  S/${totalProducto.toFixed(2)}\n`;
+    
+    subtotal += totalProducto;
+  });
+
+  // Total y pie de página
+  factura += '---------------------------------------\n';
+  factura += `Subtotal: S/${subtotal.toFixed(2)}\n`;
+  factura += '---------------------------------------\n';
+  factura += 'Gracias por su compra!\n';
+
+  return factura;
+}
 
 
 
@@ -281,6 +420,7 @@ module.exports={
     update,
     sendEmail,
   sendEmailComplt,
-  edit
+  edit,
+  agruparProductosYPedidos
     
 }

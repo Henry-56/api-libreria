@@ -174,15 +174,16 @@ router.post('/pedidos/update/:id', async function(req, res) {
    
     const pedido = await pedidosController.update(id, newData);
     const detallePedidos=await pedidosController.edit(id);
+    const productosAgrupados = await pedidosController.agruparProductosYPedidos(detallePedidos);
 
-    if (newData.estado === 'proceso') {
-      await pedidosController.sendEmail(detallePedidos );
-    } else if (newData.estado === 'completado') {
-      console.log("estamos en completado");
-      await pedidosController.sendEmailComplt(data);
+    if (newData.estado === 'pagado') {
+      await pedidosController.sendEmail(productosAgrupados );
+    } else if (newData.estado === 'finalizado') {
+      console.log("estamos en finalizado");
+      await pedidosController.sendEmailComplt(productosAgrupados);
     }
 
-    return res.status(200).json(pedido); // Asegura que solo se envíe una respuesta
+    return res.status(200).json(productosAgrupados); // Asegura que solo se envíe una respuesta
   } catch (err) {
     console.error(err);
     return res.status(500).send(err); // Asegura que solo se envíe una respuesta

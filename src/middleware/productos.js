@@ -17,6 +17,7 @@ function productoMiddleware(req, res, next) {
       // Ignorar el error y continuar con la ejecución
       console.log('No se proporcionó ninguna imagen en la solicitud');
     }
+    console.log("se guardo la img en lacaropeta publica")
     next();
   });
 }

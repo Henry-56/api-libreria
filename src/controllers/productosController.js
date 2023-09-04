@@ -128,11 +128,9 @@ async function edit(id) {
 
 
 
-
 async function update(id, data, image) {
   console.log(image);
   // Convertir los campos numéricos de cadena a valores numéricos
-
 
   // Actualizar el producto en la tabla Producto
   const productoCategoria = await ProductoCategoria.findByPk(id);
@@ -165,15 +163,26 @@ async function update(id, data, image) {
     );
   }
 
-  // Actualizar el nombre y tipo en la categoría
-  const categoriaId = productoCategoria.categoria_id;
-  await Categoria.update(
-    {
+  // Buscar una categoría existente con el nombre y tipo proporcionados
+  let categoria = await Categoria.findOne({
+    where: { nombre: data.nombreCategoria, tipo: data.tipo },
+  });
+
+  if (!categoria) {
+    // Si la categoría no existe, créala
+    categoria = await Categoria.create({
       nombre: data.nombreCategoria,
       tipo: data.tipo,
+    });
+  }
+
+  // Actualizar la relación en la tabla ProductoCategoria
+  await ProductoCategoria.update(
+    {
+      categoria_id: categoria.id,
     },
     {
-      where: { id: categoriaId },
+      where: { id: id }, // Asegúrate de actualizar la fila correcta en ProductoCategoria
     }
   );
 

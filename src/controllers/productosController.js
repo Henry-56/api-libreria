@@ -58,22 +58,31 @@ async function save(data, image) {
     });
   }
 
-  // Guardar la imagen en el modelo ProductoPicture
-  await ProductoPicture.create({
-    producto_id: producto.id,
-    img_url: image
-  });
+  // Buscar la categoría por nombre y tipo
+  const existingCategoria = await Categoria.findOne({ where: { nombre: data.nombreCategoria, tipo: data.tipo } });
 
-  // Guardar el nombre y tipo en la categoría
-  const categoria = await Categoria.create({
-    nombre: data.nombreCategoria,
-    tipo: data.tipo
-  });
+  let categoria;
+
+  if (existingCategoria) {
+    categoria = existingCategoria;
+  } else {
+    // Crear una nueva categoría si no existe
+    categoria = await Categoria.create({
+      nombre: data.nombreCategoria,
+      tipo: data.tipo
+    });
+  }
 
   // Crear la relación entre el producto y la categoría en la tabla ProductoCategoria
   await ProductoCategoria.create({
     producto_id: producto.id,
     categoria_id: categoria.id
+  });
+
+  // Guardar la imagen en el modelo ProductoPicture
+  await ProductoPicture.create({
+    producto_id: producto.id,
+    img_url: image
   });
 
   console.log(producto);

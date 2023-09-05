@@ -177,6 +177,7 @@ router.post('/pedidos/update/:id', async function(req, res) {
     const productosAgrupados = await pedidosController.agruparProductosYPedidos(detallePedidos);
 
     if (newData.estado === 'pagado') {
+      await pedidosController.disminuirCantidadProducto(productosAgrupados);
       await pedidosController.sendEmail(productosAgrupados );
     } else if (newData.estado === 'finalizado') {
       console.log("estamos en finalizado");

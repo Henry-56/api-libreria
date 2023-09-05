@@ -234,10 +234,6 @@ Estado del Pedido: ${pedido.pedido.estado}
 Productos:
 ${productosDetalle}
 
-Dirección de Envío:
-${pedido.cliente.direccion_envio.direccion}
-Teléfono de Contacto: ${pedido.cliente.direccion_envio.telefono}
-
 
 Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
 
@@ -283,9 +279,7 @@ Gracias por tu interés en nuestros productos. Nos complace informarte que tu pe
 
 ${factura}
 
-Dirección de Envío:
-${pedido.cliente.direccion_envio.direccion}
-Teléfono de Contacto: ${pedido.cliente.direccion_envio.telefono}
+
 
 Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
 

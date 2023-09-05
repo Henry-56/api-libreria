@@ -410,6 +410,41 @@ function generarBoleta(pedido) {
   return factura;
 }
 
+async function disminuirCantidadProducto(data) {
+  try {
+    for (const pedido of data) {
+      for (const productoPedido of pedido.productos) {
+        const productoId = productoPedido.id;
+        const cantidadADisminuir = productoPedido.cantidad;
+
+        // Buscar el producto por su ID
+        const producto = await Producto.findByPk(productoId);
+
+        if (!producto) {
+          throw new Error(`El producto con ID ${productoId} no existe.`);
+        }
+
+        // Verificar si la cantidad actual es suficiente para restarle la cantidad deseada
+        if (producto.cantidad < cantidadADisminuir) {
+          throw new Error(`No hay suficiente cantidad del producto ${producto.nombre}.`);
+        }
+
+        // Restar la cantidad deseada
+        producto.cantidad -= cantidadADisminuir;
+
+        // Guardar los cambios en la base de datos
+        await producto.save();
+      }
+    }
+
+    return data; // Devolver los datos actualizados
+  } catch (error) {
+    console.error('Error al disminuir la cantidad de productos:', error);
+    throw error;
+  }
+}
+
+
 
 
 
@@ -421,6 +456,7 @@ module.exports={
     sendEmail,
   sendEmailComplt,
   edit,
-  agruparProductosYPedidos
+  agruparProductosYPedidos,
+  disminuirCantidadProducto
     
 }
